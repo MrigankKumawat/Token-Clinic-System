@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      text-align: center;
+      padding-top: 100px;
+      transform: scale(1.75);
+      transform-origin: top center;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔐 Admin Login</h2>
+  <input type="password" id="password" placeholder="Enter Admin Password" />
+  <br>
+  <button onclick="login()">Login</button>
+
+  <script>
+    function login() {
+      const pass = document.getElementById("password").value;
+
+      fetch("/token/adminlogin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ pass })
+      })
+      .then(res => {
+        if (res.ok) {
+          alert("✅ Login successful!");
+          window.location.href = "/admin.html";
+        } else {
+          alert("❌ Invalid password");
+        }
+      })
+      .catch(err => {
+        console.error("Login failed", err);
+        alert("⚠️ Something went wrong");
+      });
+    }
+  </script>
+</body>
+</html>

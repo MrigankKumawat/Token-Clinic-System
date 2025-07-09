@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Your Token</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f2f2f2;
+      text-align: center;
+      transform: scale(1.75);
+      transform-origin: top center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #response {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+  
+</head>
+<body>
+
+  <div style="position: fixed; top: 10px; left: 20px; z-index: 999;">
+    <h2 style="margin: 0;">
+      <a href="/index.html" style="text-decoration: none; color: #000; font-weight: bold;">
+        🏥 Clinic Token
+      </a>
+    </h2>
+  </div>
+  
+  <h1>🎟️ Book Your Token</h1>
+
+  <input type="text" id="username" placeholder="Enter Your Name" required />
+  <br />
+  <input type="tel" id="phone" placeholder="Enter Your Phone" required />
+  <br />
+  <input type="date" id="date" required />
+  <br />
+  <button onclick="bookToken()">Book Token</button>
+
+  <div id="response"></div>
+
+  <script>
+    async function bookToken() {
+      const username = document.getElementById('username').value;
+      const phone = document.getElementById('phone').value;
+      const date = document.getElementById('date').value;
+
+      if (!username || !phone || !date) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      const res = await fetch("http://localhost:3000/token/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, phone, date })
+      });
+
+      const data = await res.text();
+      document.getElementById('response').innerText = data;
+    }
+  </script>
+
+</body>
+</html>

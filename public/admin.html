@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #fff6e5;
+      text-align: center;
+      transform: scale(1.75);
+      transform-origin: top center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #ff8800;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e06b00;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛠️ Admin Panel</h1>
+
+  <input type="date" id="adminDate" />
+  <br />
+  <button onclick="viewCurrent()">View Current Token</button>
+  <button onclick="shiftToken()">Shift to Next Token</button>
+  <button onclick="resetTokens()">Reset All Tokens</button>
+
+  <div id="status">📡 Waiting for input...</div>
+
+  <button onclick="logout()">🚪 Logout</button>
+
+  <script>
+    async function viewCurrent() {
+      const date = document.getElementById("adminDate").value;
+      if (!date) return alert("Please select a date!");
+
+      const res = await fetch(`http://localhost:3000/token/current/${date}`);
+      const data = await res.json();
+      if (!data || !data.tokenNumber) {
+        document.getElementById("status").innerText = "⚠️ No token marked as current.";
+      } else {
+        document.getElementById("status").innerText = `🎯 Current Token: ${data.tokenNumber}`;
+      }
+    }
+
+    async function shiftToken() {
+      const date = document.getElementById("adminDate").value;
+      if (!date) return alert("Please select a date!");
+
+      const res = await fetch(`http://localhost:3000/token/shift/${date}`, {
+        method: "PUT",
+      });
+      const data = await res.text();
+      document.getElementById("status").innerText = `✅ ${data}`;
+    }
+
+    async function resetTokens() {
+      const date = document.getElementById("adminDate").value;
+      if (!date) return alert("Please select a date!");
+
+      const confirmReset = confirm("⚠️ Are you sure you want to DELETE all today's tokens?");
+      if (!confirmReset) return;
+
+      const res = await fetch(`http://localhost:3000/token/reset/${date}`, {
+        method: "DELETE",
+      });
+      const data = await res.text();
+      document.getElementById("status").innerText = `🗑️ ${data}`;
+    }
+    function logout() {
+    window.location.href = "/token/logout";
+  }
+  </script>
+
+</body>
+</html>

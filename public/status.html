@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track My Token</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #eaf4ff;
+      text-align: center;
+      transform: scale(1.75);
+      transform-origin: top center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e7e34;
+    }
+    #live-status {
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+    <div style="position: fixed; top: 20px; left: 30px; z-index: 999;">
+        <a href="/index.html" style="font-size: 22px; font-weight: bold; color: black; text-decoration: none;">
+          🏥 Clinic Token
+        </a>
+      </div>
+      
+        
+  <h1>📊 Track My Token</h1>
+
+  <input type="number" id="myToken" placeholder="Enter Your Token Number" />
+  <br />
+  <input type="date" id="myDate" />
+  <br />
+  <button onclick="startTracking()">Start Tracking</button>
+
+  <div id="live-status"></div>
+
+<script>
+  let intervalId = null;
+  let alreadyAlerted = false;  // 🛑 FLAG to prevent repeated alerts
+  
+  function startTracking() {
+    const token = parseInt(document.getElementById("myToken").value);
+    const date = document.getElementById("myDate").value;
+  
+    if (!token || !date) {
+      alert("Please enter both token number and date.");
+      return;
+    }
+  
+    if (intervalId) clearInterval(intervalId);
+  
+    async function checkTokenStatus() {
+      const res = await fetch(`http://localhost:3000/token/current/${date}`);
+      const data = await res.json();
+  
+      if (!data || !data.tokenNumber) {
+        document.getElementById("live-status").innerText = "⏳ Waiting for tokens to start...";
+        return;
+      }
+  
+      const current = data.tokenNumber;
+      const remaining = token - current;
+  
+      document.getElementById("live-status").innerText =
+        `🎟️ Current Token: ${current}\n🕒 Your Turn In: ${remaining <= 0 ? 'Now!' : `${remaining} patient(s)`}`;
+  
+      if (remaining <= 3 && remaining > 0 && !alreadyAlerted) {
+        alert(`⚠️ Be ready! Only ${remaining} token(s) left before your turn.`);
+        alreadyAlerted = true; // 🟠 mark alert as shown
+      }
+  
+      if (remaining === 0 && !alreadyAlerted) {
+        alert("✅ It's your turn! Please proceed to the clinic.");
+        alreadyAlerted = true; // ✅ only alert once
+        clearInterval(intervalId); // ⛔ stop tracking if you want
+      }
+    }
+  
+    checkTokenStatus(); // 👈 call once instantly
+    intervalId = setInterval(checkTokenStatus, 5000); // repeat every 5s
+  }
+</script>
+
+</body>
+</html>
