@@ -14,16 +14,12 @@ This is a backend project for booking patient tokens using Node.js, Express, and
 
 ---
 
-## ▶️ Run Locally
-
-```bash
-npm install
-node index.js
-
 🚧 Project Status
 ⚠️ This project is currently under development.
 Some features may be incomplete or missing.
 More functionality and improvements are coming soon. Stay tuned!
+
+---
 
 🔧 To-Do
 - Add booking history retrieval (GET endpoint)
